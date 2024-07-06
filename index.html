@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>在线机器人</title>
+    <style>
+        .chat-container {
+            border: 1px solid #ccc;
+            padding: 10px;
+            height: 300px;
+            overflow-y: auto;
+        }
+        .chat-message {
+            margin-bottom: 10px;
+        }
+        .user-message {
+            text-align: right;
+            color: blue;
+        }
+        .api-message {
+            color: green;
+        }
+        .loading-message {
+            text-align: center;
+            color: gray;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <center><h1>机器人聊天问答</h1></center>
+    <div id="chatContainer" class="chat-container"></div>
+    <input type="text" id="userInput" placeholder="输入您想交流的">
+    <button onclick="sendRequest()">发送</button>
+
+    <script>
+        async function sendRequest() {
+            const userInput = document.getElementById('userInput').value;
+            const apiEndpoint = 'https://api.cloudflare.com/client/v4/accounts/{accounts_id}/ai/run/@cf/meta/llama-2-7b-chat-fp16';
+            const apiKey = 'Bearer Torken';
+            const corsProxy = 'https://cors.eu.org/'; // 使用CORS Anywhere代理
+
+            // 显示加载中的提示
+            const chatContainer = document.getElementById('chatContainer');
+            const loadingMessage = document.createElement('div');
+            loadingMessage.classList.add('chat-message', 'loading-message');
+            loadingMessage.textContent = '正在思考中...';
+            chatContainer.appendChild(loadingMessage);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+
+            const payload = {
+                messages: [
+                    {
+                        role: "system",
+                        content: "You are a friendly artificial intelligence who will help people solve problems."
+                    },
+                    {
+                        role: "user",
+                        content: userInput
+                    }
+                ]
+            };
+
+            try {
+                const response = await axios.post(corsProxy + apiEndpoint, payload, {
+                    headers: {
+                        'Authorization': apiKey,
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+
+                if (response.data.success) {
+                    // 移除加载中的提示
+                    chatContainer.removeChild(loadingMessage);
+
+                    const userMessage = document.createElement('div');
+                    userMessage.classList.add('chat-message', 'user-message');
+                    userMessage.textContent = userInput;
+                    chatContainer.appendChild(userMessage);
+
+                    const apiMessage = document.createElement('div');
+                    apiMessage.classList.add('chat-message', 'api-message');
+                    apiMessage.textContent = response.data.result.response;
+                    chatContainer.appendChild(apiMessage);
+
+                    // 清空输入框并滚动到底部
+                    document.getElementById('userInput').value = '';
+                    chatContainer.scrollTop = chatContainer.scrollHeight;
+                } else {
+                    // 移除加载中的提示
+                    chatContainer.removeChild(loadingMessage);
+                    alert('API 调用失败');
+                }
+            } catch (error) {
+                // 移除加载中的提示
+                chatContainer.removeChild(loadingMessage);
+                console.error('请求失败:', error);
+                alert('请求失败，请查看控制台错误信息');
+            }
+        }
+    </script>
+</body>
+</html>
