@@ -1,0 +1,1 @@
+这是我利用Cloudflare的REST API搭建的一个聊天机器人界面，使用的是Cloudflare中的通义千问API，为了避免跨域请求，我使用Workers进行代理。项目的密钥和接口均写入前端，故选择闭源。
