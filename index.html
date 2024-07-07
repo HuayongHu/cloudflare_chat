@@ -1,87 +1,199 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-     <meta name='description' content='chat-GPT,Google,llama,大模型,API,Cloudflare,cors,CORS,Cors anywhere,大模型,聊天机器人'>
-    <title>在线机器人</title>
-    <style>
-        body {
-            margin: 0;
-            font-family: 'Arial', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f3f4f6;
-        }
-        .container {
-            width: 100%;
-            max-width: 600px;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            background-color: #fff;
-        }
-        .chat-container {
-            border: 1px solid #e5e7eb;
-            padding: 10px;
-            height: 300px;
-            overflow-y: auto;
-            margin-bottom: 20px;
-            border-radius: 4px;
-        }
-        .chat-message {
-            margin-bottom: 10px;
-            padding: 8px;
-            border-radius: 4px;
-            word-wrap: break-word;
-        }
-        .user-message {
-            text-align: right;
-            color: #3b82f6;
-            background-color: #e0e7ff;
-        }
-        .api-message {
-            color: #10b981;
-            background-color: #d1fae5;
-        }
-        .loading-message {
-            text-align: center;
-            color: #6b7280;
-        }
-        input[type="text"], button {
-            font-size: 16px;
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 4px;
-            border: 1px solid #d1d5db;
-            box-sizing: border-box;
-        }
-        button {
-            background-color: #3b82f6;
-            color: white;
-            cursor: pointer;
-            transition: transform 0.1s ease-in-out;
-        }
-        button:active {
-            transform: scale(0.95);
-        }
-        @media screen and (max-width: 600px) {
-            .container {
-                padding: 10px;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta name='description' content='通义千问,chat-GPT,Google,llama,大模型,API,Cloudflare,cors,CORS,Cors anywhere,大模型,聊天机器人'>
+<title>聊天机器人</title>
+<style>
+body {
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background-color: #f3f4f6;
+}
+
+.container {
+    flex: 1;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    background-color: #fff;
+    overflow-y: auto;
+}
+
+.chat-container {
+    border: 1px solid #e5e7eb;
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+}
+
+.chat-message {
+    margin-bottom: 10px;
+    padding: 8px;
+    border-radius: 4px;
+    word-wrap: break-word;
+}
+
+.user-message {
+    text-align: right;
+    color: #333;
+    background-color: #f3f4f6;
+}
+
+.api-message {
+    color: #333;
+    background-color: #ebebeb;
+}
+
+.loading-message {
+    text-align: center;
+    color: #9E9E9E;
+}
+
+.input-container {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background-color: #fff;
+    border-top: 1px solid #e5e7eb;
+}
+.footer {
+    padding: 10px;
+    background-color: #fff;
+    border-top: 1px solid #e5e7eb;
+    text-align: center;
+    font-size: 10px;
+    color: #9E9E9E;
+}
+
+input[type=text] {
+    flex: 1;
+    font-size: 16px;
+    padding: 10px;
+    margin-right: 10px;
+    border-radius: 4px;
+    border: 1px solid #E0E0E0;
+    box-sizing: border-box;
+}
+
+button {
+    font-size: 16px;
+    padding: 10px;
+    border-radius: 4px;
+    border: none;
+    background-color: #333;
+    color: #fff;
+    cursor: pointer;
+    transition: box-shadow 0.3s ease;
+}
+
+button:hover {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+button:active {
+    transform: scale(0.95);
+}
+
+@media screen and (max-width: 600px) {
+    .container {
+        padding: 10px;
+    }
+}
+</style>
 </head>
 <body>
-    <div class="container">
-        <h1>在线机器人</h1>
-        <div id="chatContainer" class="chat-container"></div>
-        <input type="text" id="userInput" placeholder="请输入您想说的...">
-        <button onclick="sendRequest()">发送</button>
-    </div>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-  <script>async function sendRequest(){const userInput=document.getElementById('userInput').value;const apiEndpoint='https://api.cloudflare.com/client/v4/accounts/c999ea1c681f2365538b342d64bccbe2/ai/run/@cf/qwen/qwen1.5-14b-chat-awq';const apiKey='Bearer ZKt1bFhGDQ9vwtsX7Hr6KDl1sTHpbadZW3EEoEPp';const corsProxy='https://cors.011102.xyz/';const chatContainer=document.getElementById('chatContainer');const loadingMessage=document.createElement('div');loadingMessage.classList.add('chat-message','loading-message');loadingMessage.textContent='正在思考中...';chatContainer.appendChild(loadingMessage);chatContainer.scrollTop=chatContainer.scrollHeight;const payload={messages:[{role:"system",content:"你是一个善良且优秀的机器人，编号011102号，你愿意为人们提供帮助"},{role:"user",content:userInput}]};try{const response=await axios.post(corsProxy+apiEndpoint,payload,{headers:{'Authorization':apiKey,'Content-Type':'application/json','X-Requested-With':'XMLHttpRequest'}});if(response.data.success){chatContainer.removeChild(loadingMessage);const userMessage=document.createElement('div');userMessage.classList.add('chat-message','user-message');userMessage.textContent=userInput;chatContainer.appendChild(userMessage);const apiMessage=document.createElement('div');apiMessage.classList.add('chat-message','api-message');apiMessage.textContent=response.data.result.response;chatContainer.appendChild(apiMessage);document.getElementById('userInput').value='';chatContainer.scrollTop=chatContainer.scrollHeight}else{chatContainer.removeChild(loadingMessage);alert('API 调用失败')}}catch(error){chatContainer.removeChild(loadingMessage);console.error('请求失败:',error);alert('请求失败，请查看控制台错误信息')}}</script></body>
+<div class="container" id="chatContainer">
+    <!-- 对话内容会动态插入到这里 -->
+</div>
+<div class="input-container">
+    <input type="text" id="userInput" placeholder="请输入您想说的话...">
+    <button onclick="sendRequest()">发送</button>
+</div>
+<div class="footer">
+    以上内容均由AI生成，仅供参考和借鉴 
+    <!--不蒜子统计-->
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+    </script>
+    <center>
+    <font size="1">©2024&nbsp All rights reserved</font>
+    <font size="1">&nbsp共</font>
+    <span id="busuanzi_value_page_pv" size="1"><i class="fa fa-spinner fa-spin"></i></span>
+    <font size="1">次访问</font>
+    </center>
+    <!--版权信息结束-->
+
+</div>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+        <script>
+            async function sendRequest() {
+                const userInput = document.getElementById('userInput').value;
+                const apiEndpoint = 'https://api.cloudflare.com/client/v4/accounts/c999ea1c681f2365538b342d64bccbe2/ai/run/@cf/qwen/qwen1.5-14b-chat-awq';
+                const apiKey = 'Bearer ZKt1bFhGDQ9vwtsX7Hr6KDl1sTHpbadZW3EEoEPp';
+                const corsProxy = 'https://cors.011102.xyz/';
+                const chatContainer = document.getElementById('chatContainer');
+                const loadingMessage = document.createElement('div');
+                loadingMessage.classList.add('chat-message', 'loading-message');
+                loadingMessage.textContent = '正在联网中...';
+                chatContainer.appendChild(loadingMessage);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+                setTimeout(()=>{
+                    loadingMessage.innerHTML = '正在思考...';
+                }
+                , 1000);
+                setTimeout(()=>{
+                    loadingMessage.innerHTML = '正在组织语言...';
+                }
+                , 1000);
+                const payload = {
+                    messages: [{
+                        role: "system",
+                        content: "从现在开始，你是一个专业且友好的机器人，编号011102，你可以帮用户解决问题"
+                    }, {
+                        role: "user",
+                        content: userInput
+                    }]
+                };
+                try {
+                    const response = await axios.post(corsProxy + apiEndpoint, payload, {
+                        headers: {
+                            'Authorization': apiKey,
+                            'Content-Type': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    });
+                    if (response.data.success) {
+                        chatContainer.removeChild(loadingMessage);
+                        const userMessage = document.createElement('div');
+                        userMessage.classList.add('chat-message', 'user-message');
+                        userMessage.textContent = userInput;
+                        chatContainer.appendChild(userMessage);
+                        const apiMessage = document.createElement('div');
+                        apiMessage.classList.add('chat-message', 'api-message');
+                        apiMessage.textContent = response.data.result.response;
+                        chatContainer.appendChild(apiMessage);
+                        document.getElementById('userInput').value = '';
+                        chatContainer.scrollTop = chatContainer.scrollHeight
+                    } else {
+                        chatContainer.removeChild(loadingMessage);
+                        alert('API 调用失败')
+                    }
+                } catch (error) {
+                    chatContainer.removeChild(loadingMessage);
+                    console.error('请求失败:', error);
+                    alert('请求失败，请查看控制台错误信息')
+                }
+            }
+document.getElementById('userInput').addEventListener('keypress', function(event) {
+    if (event.key === 'Enter') {
+        event.preventDefault(); // 阻止默认的表单提交行为
+        sendRequest(); // 调用发送请求的函数
+    }
+});
+        </script>
+</body>
 </html>
