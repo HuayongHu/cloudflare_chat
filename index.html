@@ -6,23 +6,22 @@
 <meta name='description' content='通义千问,chat-GPT,Google,llama,大模型,API,Cloudflare,cors,CORS,Cors anywhere,大模型,聊天机器人'>
 <title>聊天机器人</title>
 <style>
-body {
-    margin: 0;
-    font-family: 'Arial', sans-serif;
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    background-color: #f3f4f6;
-}
-
-.container {
-    flex: 1;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    background-color: #fff;
-    overflow-y: auto;
-}
+html, body {
+            height: 100%;
+            margin: 0;
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+        .container {
+            flex: 1; /* 使容器填充剩余空间 */
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+            overflow-y: auto; /* 如果内容超出容器高度，则显示滚动条 */
+        }
 
 .chat-container {
     border: 1px solid #e5e7eb;
