@@ -130,6 +130,13 @@ button:active {
                 const apiKey = 'Bearer ZKt1bFhGDQ9vwtsX7Hr6KDl1sTHpbadZW3EEoEPp';
                 const corsProxy = 'https://cors.011102.xyz/';
                 const chatContainer = document.getElementById('chatContainer');
+                // 创建用户消息元素并添加到对话容器中
+                const userMessage = document.createElement('div');
+                userMessage.classList.add('chat-message', 'user-message');
+                userMessage.textContent = userInput;
+                chatContainer.appendChild(userMessage);
+                // 清空输入框
+                document.getElementById('userInput').value = '';
                 const loadingMessage = document.createElement('div');
                 loadingMessage.classList.add('chat-message', 'loading-message');
                 loadingMessage.textContent = '正在联网中...';
@@ -162,10 +169,6 @@ button:active {
                     });
                     if (response.data.success) {
                         chatContainer.removeChild(loadingMessage);
-                        const userMessage = document.createElement('div');
-                        userMessage.classList.add('chat-message', 'user-message');
-                        userMessage.textContent = userInput;
-                        chatContainer.appendChild(userMessage);
                         const apiMessage = document.createElement('div');
                         apiMessage.classList.add('chat-message', 'api-message');
                         apiMessage.textContent = response.data.result.response;
