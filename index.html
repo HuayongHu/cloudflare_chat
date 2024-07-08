@@ -124,6 +124,16 @@ button:active {
 </div>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
         <script>
+        <script>
+            // 在页面加载完成后执行的函数
+           window.onload = function() {
+           const chatContainer = document.getElementById('chatContainer');
+            // 创建机器人消息元素并添加到对话容器中
+            const apiMessage = document.createElement('div');
+            apiMessage.classList.add('chat-message', 'api-message');
+            apiMessage.textContent = '您好，我是011102号机器人，我可以为您解答所有问题，请问您有什么需要帮助的嘛？';
+            chatContainer.appendChild(apiMessage);
+           };
             async function sendRequest() {
                 const userInput = document.getElementById('userInput').value;
                 const apiEndpoint = 'https://api.cloudflare.com/client/v4/accounts/c999ea1c681f2365538b342d64bccbe2/ai/run/@cf/qwen/qwen1.5-14b-chat-awq';
