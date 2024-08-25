@@ -116,6 +116,12 @@
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
+        const chatContainer = document.getElementById('chatContainer');
+        const userInput = document.getElementById('userInput');
+
+        // 用于保存对话上下文
+        let conversationHistory = [];
+
         function typeWriter(element, text, speed = 50) {
             let index = 0;
             const intervalId = setInterval(() => {
@@ -128,27 +134,16 @@
             }, speed);
         }
 
-        window.onload = function() {
-            const chatContainer = document.getElementById('chatContainer');
-            const apiMessage = document.createElement('div');
-            apiMessage.classList.add('chat-message', 'api-message');
-            apiMessage.textContent = '您好，我是011102号机器人，我可以为您解答所有问题，请问您有什么需要帮助的嘛？';
-            chatContainer.appendChild(apiMessage);
-        };
-
         async function sendRequest() {
-            const userInput = document.getElementById('userInput').value;
-            const apiEndpoint = 'https://api.cloudflare.com/client/v4/accounts/c999ea1c681f2365538b342d64bccbe2/ai/run/@cf/qwen/qwen1.5-14b-chat-awq';
-            const apiKey = 'Bearer ZKt1bFhGDQ9vwtsX7Hr6KDl1sTHpbadZW3EEoEPp';
-            const corsProxy = 'https://cors.011102.xyz/';
-            const chatContainer = document.getElementById('chatContainer');
+            const inputText = userInput.value;
+            if (!inputText.trim()) return; // 防止发送空消息
 
             const userMessage = document.createElement('div');
             userMessage.classList.add('chat-message', 'user-message');
-            userMessage.textContent = userInput;
+            userMessage.textContent = inputText;
             chatContainer.appendChild(userMessage);
 
-            document.getElementById('userInput').value = '';
+            userInput.value = '';
 
             const loadingMessage = document.createElement('div');
             loadingMessage.classList.add('chat-message', 'loading-message');
@@ -156,28 +151,21 @@
             chatContainer.appendChild(loadingMessage);
             chatContainer.scrollTop = chatContainer.scrollHeight;
 
-            setTimeout(() => {
-                loadingMessage.innerHTML = '正在思考...';
-            }, 1000);
+            // 添加用户消息到对话上下文
+            conversationHistory.push({
+                role: 'user',
+                content: inputText
+            });
 
-            setTimeout(() => {
-                loadingMessage.innerHTML = '正在组织语言...';
-            }, 2000);
-
+            // 构建请求负载
             const payload = {
-                messages: [{
-                    role: "system",
-                    content: "从现在开始，你是一个专业且友好的机器人，编号011102，你可以帮用户解决问题"
-                }, {
-                    role: "user",
-                    content: userInput
-                }]
+                messages: conversationHistory
             };
 
             try {
-                const response = await axios.post(corsProxy + apiEndpoint, payload, {
+                const response = await axios.post('https://cors.011102.xyz/https://api.cloudflare.com/client/v4/accounts/c999ea1c681f2365538b342d64bccbe2/ai/run/@cf/qwen/qwen1.5-14b-chat-awq', payload, {
                     headers: {
-                        'Authorization': apiKey,
+                        'Authorization': 'Bearer ZKt1bFhGDQ9vwtsX7Hr6KDl1sTHpbadZW3EEoEPp',
                         'Content-Type': 'application/json',
                         'X-Requested-With': 'XMLHttpRequest'
                     }
@@ -190,9 +178,15 @@
                     apiMessage.classList.add('chat-message', 'api-message');
                     chatContainer.appendChild(apiMessage);
 
-                    // 使用 marked 将 Markdown 转换为 HTML
+                    // 渲染 Markdown 内容
                     const markdownText = response.data.result.response;
                     apiMessage.innerHTML = marked.parse(markdownText);
+
+                    // 添加 AI 消息到对话上下文
+                    conversationHistory.push({
+                        role: 'system',
+                        content: response.data.result.response
+                    });
 
                     chatContainer.scrollTop = chatContainer.scrollHeight;
                 } else {
@@ -206,12 +200,21 @@
             }
         }
 
-        document.getElementById('userInput').addEventListener('keypress', function(event) {
+        userInput.addEventListener('keypress', function(event) {
             if (event.key === 'Enter') {
                 event.preventDefault(); // 阻止默认的表单提交行为
                 sendRequest(); // 调用发送请求的函数
             }
         });
+
+        // 初始化对话
+        window.onload = function() {
+            const apiMessage = document.createElement('div');
+            apiMessage.classList.add('chat-message', 'api-message');
+            apiMessage.textContent = '您好，我是011102号机器人，我可以为您解答所有问题，请问您有什么需要帮助的嘛？';
+            chatContainer.appendChild(apiMessage);
+        };
     </script>
 </body>
 </html>
+
