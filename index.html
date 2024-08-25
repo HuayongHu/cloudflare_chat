@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-<meta name='description' content='通义千问,chat-GPT,Google,llama,大模型,API,Cloudflare,cors,CORS,Cors anywhere,大模型,聊天机器人'>
-<title>聊天机器人</title>
-<meta name="msvalidate.01" content="C6B7DCA920BD89C3122D6D27F520FDFD" />
-<style>
-html, body {
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta name='description' content='通义千问,chat-GPT,Google,llama,大模型,API,Cloudflare,cors,CORS,Cors anywhere,大模型,聊天机器人'>
+    <title>聊天机器人</title>
+    <meta name="msvalidate.01" content="C6B7DCA920BD89C3122D6D27F520FDFD" />
+    <style>
+        html, body {
             height: 100%;
             margin: 0;
         }
@@ -23,184 +23,195 @@ html, body {
             background-color: #fff;
             overflow-y: auto; /* 如果内容超出容器高度，则显示滚动条 */
         }
-
-.chat-container {
-    border: 1px solid #e5e7eb;
-    padding: 10px;
-    margin-bottom: 20px;
-    border-radius: 4px;
-}
-
-.chat-message {
-    margin-bottom: 10px;
-    padding: 8px;
-    border-radius: 4px;
-    word-wrap: break-word;
-}
-
-.user-message {
-    text-align: right;
-    color: #333;
-    background-color: #f3f4f6;
-}
-
-.api-message {
-    color: #333;
-    background-color: #ebebeb;
-}
-
-.loading-message {
-    text-align: center;
-    color: #9E9E9E;
-}
-
-.input-container {
-    display: flex;
-    align-items: center;
-    padding: 10px;
-    background-color: #fff;
-    border-top: 1px solid #e5e7eb;
-}
-.footer {
-    padding: 10px;
-    background-color: #fff;
-    border-top: 1px solid #e5e7eb;
-    text-align: center;
-    font-size: 12px;
-    color: #9E9E9E;
-}
-
-input[type=text] {
-    flex: 1;
-    font-size: 16px;
-    padding: 10px;
-    margin-right: 10px;
-    border-radius: 4px;
-    border: 1px solid #E0E0E0;
-    box-sizing: border-box;
-}
-
-button {
-    font-size: 16px;
-    padding: 10px;
-    border-radius: 4px;
-    border: none;
-    background-color: #333;
-    color: #fff;
-    cursor: pointer;
-    transition: box-shadow 0.3s ease;
-}
-
-button:hover {
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-}
-
-button:active {
-    transform: scale(0.95);
-}
-
-@media screen and (max-width: 600px) {
-    .container {
-        padding: 10px;
-    }
-}
-</style>
+        .chat-container {
+            border: 1px solid #e5e7eb;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+        .chat-message {
+            margin-bottom: 10px;
+            padding: 8px;
+            border-radius: 4px;
+            word-wrap: break-word;
+        }
+        .user-message {
+            text-align: right;
+            color: #333;
+            background-color: #f3f4f6;
+        }
+        .api-message {
+            color: #333;
+            background-color: #ebebeb;
+        }
+        .loading-message {
+            text-align: center;
+            color: #9E9E9E;
+        }
+        .input-container {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background-color: #fff;
+            border-top: 1px solid #e5e7eb;
+        }
+        .footer {
+            padding: 10px;
+            background-color: #fff;
+            border-top: 1px solid #e5e7eb;
+            text-align: center;
+            font-size: 12px;
+            color: #9E9E9E;
+        }
+        input[type=text] {
+            flex: 1;
+            font-size: 16px;
+            padding: 10px;
+            margin-right: 10px;
+            border-radius: 4px;
+            border: 1px solid #E0E0E0;
+            box-sizing: border-box;
+        }
+        button {
+            font-size: 16px;
+            padding: 10px;
+            border-radius: 4px;
+            border: none;
+            background-color: #333;
+            color: #fff;
+            cursor: pointer;
+            transition: box-shadow 0.3s ease;
+        }
+        button:hover {
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        button:active {
+            transform: scale(0.95);
+        }
+        @media screen and (max-width: 600px) {
+            .container {
+                padding: 10px;
+            }
+        }
+    </style>
+    <!-- 引入 marked 库 -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
-<div class="container" id="chatContainer">
-    <!-- 对话内容会动态插入到这里 -->
-</div>
-<div class="input-container">
-    <input type="text" id="userInput" placeholder="请输入您想说的话...">
-    <button onclick="sendRequest()">发送</button>
-</div>
-<div class="footer">
-    <!--不蒜子统计-->
-    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
-    </script>
-    <center>
-    以上内容均由AI生成&nbsp ©2024&nbsp All rights reserved
-    &nbsp共<span id="busuanzi_value_page_pv" size="1"><i class="fa fa-spinner fa-spin"></i></span>次访问
-    </center>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-        <script>
-            // 在页面加载完成后执行的函数
-           window.onload = function() {
-           const chatContainer = document.getElementById('chatContainer');
-            // 创建机器人消息元素并添加到对话容器中
+    <div class="container" id="chatContainer">
+        <!-- 对话内容会动态插入到这里 -->
+    </div>
+    <div class="input-container">
+        <input type="text" id="userInput" placeholder="请输入您想说的话...">
+        <button onclick="sendRequest()">发送</button>
+    </div>
+    <div class="footer">
+        <!-- 不蒜子统计 -->
+        <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+        <center>
+            以上内容均由AI生成&nbsp ©2024&nbsp All rights reserved
+            &nbsp共<span id="busuanzi_value_page_pv" size="1"><i class="fa fa-spinner fa-spin"></i></span>次访问
+        </center>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        function typeWriter(element, text, speed = 50) {
+            let index = 0;
+            const intervalId = setInterval(() => {
+                if (index < text.length) {
+                    element.textContent += text.charAt(index);
+                    index++;
+                } else {
+                    clearInterval(intervalId);
+                }
+            }, speed);
+        }
+
+        window.onload = function() {
+            const chatContainer = document.getElementById('chatContainer');
             const apiMessage = document.createElement('div');
             apiMessage.classList.add('chat-message', 'api-message');
             apiMessage.textContent = '您好，我是011102号机器人，我可以为您解答所有问题，请问您有什么需要帮助的嘛？';
             chatContainer.appendChild(apiMessage);
-           };
-            async function sendRequest() {
-                const userInput = document.getElementById('userInput').value;
-                const apiEndpoint = 'https://api.cloudflare.com/client/v4/accounts/c999ea1c681f2365538b342d64bccbe2/ai/run/@cf/qwen/qwen1.5-14b-chat-awq';
-                const apiKey = 'Bearer ZKt1bFhGDQ9vwtsX7Hr6KDl1sTHpbadZW3EEoEPp';
-                const corsProxy = 'https://cors.011102.xyz/';
-                const chatContainer = document.getElementById('chatContainer');
-                // 创建用户消息元素并添加到对话容器中
-                const userMessage = document.createElement('div');
-                userMessage.classList.add('chat-message', 'user-message');
-                userMessage.textContent = userInput;
-                chatContainer.appendChild(userMessage);
-                // 清空输入框
-                document.getElementById('userInput').value = '';
-                const loadingMessage = document.createElement('div');
-                loadingMessage.classList.add('chat-message', 'loading-message');
-                loadingMessage.textContent = '正在联网中...';
-                chatContainer.appendChild(loadingMessage);
-                chatContainer.scrollTop = chatContainer.scrollHeight;
-                setTimeout(()=>{
-                    loadingMessage.innerHTML = '正在思考...';
-                }
-                , 1000);
-                setTimeout(()=>{
-                    loadingMessage.innerHTML = '正在组织语言...';
-                }
-                , 1000);
-                const payload = {
-                    messages: [{
-                        role: "system",
-                        content: "从现在开始，你是一个专业且友好的机器人，编号011102，你可以帮用户解决问题"
-                    }, {
-                        role: "user",
-                        content: userInput
-                    }]
-                };
-                try {
-                    const response = await axios.post(corsProxy + apiEndpoint, payload, {
-                        headers: {
-                            'Authorization': apiKey,
-                            'Content-Type': 'application/json',
-                            'X-Requested-With': 'XMLHttpRequest'
-                        }
-                    });
-                    if (response.data.success) {
-                        chatContainer.removeChild(loadingMessage);
-                        const apiMessage = document.createElement('div');
-                        apiMessage.classList.add('chat-message', 'api-message');
-                        apiMessage.textContent = response.data.result.response;
-                        chatContainer.appendChild(apiMessage);
-                        document.getElementById('userInput').value = '';
-                        chatContainer.scrollTop = chatContainer.scrollHeight
-                    } else {
-                        chatContainer.removeChild(loadingMessage);
-                        alert('API 调用失败')
+        };
+
+        async function sendRequest() {
+            const userInput = document.getElementById('userInput').value;
+            const apiEndpoint = 'https://api.cloudflare.com/client/v4/accounts/c999ea1c681f2365538b342d64bccbe2/ai/run/@cf/qwen/qwen1.5-14b-chat-awq';
+            const apiKey = 'Bearer ZKt1bFhGDQ9vwtsX7Hr6KDl1sTHpbadZW3EEoEPp';
+            const corsProxy = 'https://cors.011102.xyz/';
+            const chatContainer = document.getElementById('chatContainer');
+
+            const userMessage = document.createElement('div');
+            userMessage.classList.add('chat-message', 'user-message');
+            userMessage.textContent = userInput;
+            chatContainer.appendChild(userMessage);
+
+            document.getElementById('userInput').value = '';
+
+            const loadingMessage = document.createElement('div');
+            loadingMessage.classList.add('chat-message', 'loading-message');
+            loadingMessage.textContent = '正在联网中...';
+            chatContainer.appendChild(loadingMessage);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+
+            setTimeout(() => {
+                loadingMessage.innerHTML = '正在思考...';
+            }, 1000);
+
+            setTimeout(() => {
+                loadingMessage.innerHTML = '正在组织语言...';
+            }, 2000);
+
+            const payload = {
+                messages: [{
+                    role: "system",
+                    content: "从现在开始，你是一个专业且友好的机器人，编号011102，你可以帮用户解决问题"
+                }, {
+                    role: "user",
+                    content: userInput
+                }]
+            };
+
+            try {
+                const response = await axios.post(corsProxy + apiEndpoint, payload, {
+                    headers: {
+                        'Authorization': apiKey,
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
                     }
-                } catch (error) {
+                });
+
+                if (response.data.success) {
                     chatContainer.removeChild(loadingMessage);
-                    console.error('请求失败:', error);
-                    alert('请求失败，请查看控制台错误信息')
+
+                    const apiMessage = document.createElement('div');
+                    apiMessage.classList.add('chat-message', 'api-message');
+                    chatContainer.appendChild(apiMessage);
+
+                    // 使用 marked 将 Markdown 转换为 HTML
+                    const markdownText = response.data.result.response;
+                    apiMessage.innerHTML = marked.parse(markdownText);
+
+                    chatContainer.scrollTop = chatContainer.scrollHeight;
+                } else {
+                    chatContainer.removeChild(loadingMessage);
+                    alert('API 调用失败');
                 }
+            } catch (error) {
+                chatContainer.removeChild(loadingMessage);
+                console.error('请求失败:', error);
+                alert('请求失败，请查看控制台错误信息');
             }
-document.getElementById('userInput').addEventListener('keypress', function(event) {
-    if (event.key === 'Enter') {
-        event.preventDefault(); // 阻止默认的表单提交行为
-        sendRequest(); // 调用发送请求的函数
-    }
-});
-        </script>
+        }
+
+        document.getElementById('userInput').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault(); // 阻止默认的表单提交行为
+                sendRequest(); // 调用发送请求的函数
+            }
+        });
+    </script>
 </body>
 </html>
