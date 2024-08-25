@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta name='description' content='通义千问,chat-GPT,Google,llama,大模型,API,Cloudflare,cors,CORS,Cors anywhere,大模型,聊天机器人'>
-    <title>聊天机器人</title>
-    <meta name="msvalidate.01" content="C6B7DCA920BD89C3122D6D27F520FDFD" />
+    <title>在线人工智能对话</title>
     <style>
         html, body {
             height: 100%;
@@ -56,11 +55,11 @@
             border-top: 1px solid #e5e7eb;
         }
         .footer {
-            padding: 10px;
+            padding: 3px;
             background-color: #fff;
             border-top: 1px solid #e5e7eb;
             text-align: center;
-            font-size: 12px;
+            font-size: 13px;
             color: #9E9E9E;
         }
         input[type=text] {
@@ -102,7 +101,7 @@
         <!-- 对话内容会动态插入到这里 -->
     </div>
     <div class="input-container">
-        <input type="text" id="userInput" placeholder="请输入您想说的话...">
+        <input type="text" id="userInput" placeholder="请输入您想问的...">
         <button onclick="sendRequest()">发送</button>
     </div>
     <div class="footer">
@@ -122,21 +121,20 @@
         // 用于保存对话上下文
         let conversationHistory = [];
 
-        function typeWriter(element, text, speed = 50) {
-            let index = 0;
-            const intervalId = setInterval(() => {
-                if (index < text.length) {
-                    element.textContent += text.charAt(index);
-                    index++;
-                } else {
-                    clearInterval(intervalId);
-                }
-            }, speed);
-        }
+        window.onload = function() {
+            const apiMessage = document.createElement('div');
+            apiMessage.classList.add('chat-message', 'api-message');
+            apiMessage.textContent = '您好，我是小胡，您的学习助手，很高兴为您服务。您有什么需要帮助的嘛？';
+            chatContainer.appendChild(apiMessage);
+            conversationHistory.push({ role: 'system', content: '您好，我是小胡，您的学习助手，很高兴为您服务。您有什么需要帮助的嘛？' });
+        };
 
         async function sendRequest() {
             const inputText = userInput.value;
             if (!inputText.trim()) return; // 防止发送空消息
+
+            // 添加用户消息到对话上下文
+            conversationHistory.push({ role: 'user', content: inputText });
 
             const userMessage = document.createElement('div');
             userMessage.classList.add('chat-message', 'user-message');
@@ -147,17 +145,14 @@
 
             const loadingMessage = document.createElement('div');
             loadingMessage.classList.add('chat-message', 'loading-message');
-            loadingMessage.textContent = '正在联网思考中...请稍后';
+            loadingMessage.textContent = '正在联网思考中...';
             chatContainer.appendChild(loadingMessage);
             chatContainer.scrollTop = chatContainer.scrollHeight;
 
-            // 添加用户消息到对话上下文
-            conversationHistory.push({
-                role: 'user',
-                content: inputText
-            });
+            setTimeout(() => {
+                loadingMessage.innerHTML = '正在组织语言...请稍后';
+            }, 2000);
 
-            // 构建请求负载
             const payload = {
                 messages: conversationHistory
             };
@@ -178,15 +173,12 @@
                     apiMessage.classList.add('chat-message', 'api-message');
                     chatContainer.appendChild(apiMessage);
 
-                    // 渲染 Markdown 内容
+                    // 使用 marked 将 Markdown 转换为 HTML
                     const markdownText = response.data.result.response;
                     apiMessage.innerHTML = marked.parse(markdownText);
 
                     // 添加 AI 消息到对话上下文
-                    conversationHistory.push({
-                        role: 'system',
-                        content: response.data.result.response
-                    });
+                    conversationHistory.push({ role: 'system', content: response.data.result.response });
 
                     chatContainer.scrollTop = chatContainer.scrollHeight;
                 } else {
@@ -206,15 +198,6 @@
                 sendRequest(); // 调用发送请求的函数
             }
         });
-
-        // 初始化对话
-        window.onload = function() {
-            const apiMessage = document.createElement('div');
-            apiMessage.classList.add('chat-message', 'api-message');
-            apiMessage.textContent = '您好，我是011102号机器人，我可以为您解答所有问题，请问您有什么需要帮助的嘛？';
-            chatContainer.appendChild(apiMessage);
-        };
     </script>
 </body>
 </html>
-
