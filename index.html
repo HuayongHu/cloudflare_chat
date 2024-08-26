@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta name='description' content='通义千问,chat-GPT,Google,llama,大模型,API,Cloudflare,cors,CORS,Cors anywhere,大模型,聊天机器人'>
-    <title>在线人工智能对话</title>
+    <title>智能助手</title>
     <style>
         html, body {
             height: 100%;
@@ -15,12 +15,12 @@
             flex-direction: column;
         }
         .container {
-            flex: 1; /* 使容器填充剩余空间 */
+            flex: 1;
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             background-color: #fff;
-            overflow-y: auto; /* 如果内容超出容器高度，则显示滚动条 */
+            overflow-y: auto;
         }
         .chat-container {
             border: 1px solid #e5e7eb;
@@ -57,7 +57,7 @@
         .footer {
             padding: 3px;
             background-color: #fff;
-            border-top: 1px solid #e5e7eb;
+            border-top: 1px solid #e5e7e8;
             text-align: center;
             font-size: 13px;
             color: #9E9E9E;
@@ -93,7 +93,6 @@
             }
         }
     </style>
-    <!-- 引入 marked 库 -->
     <script src="https://cors.011102.xyz/https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
@@ -117,6 +116,7 @@
     <script>
         const chatContainer = document.getElementById('chatContainer');
         const userInput = document.getElementById('userInput');
+        let timer;
 
         // 用于保存对话上下文
         let conversationHistory = [];
@@ -126,8 +126,17 @@
             apiMessage.classList.add('chat-message', 'api-message');
             apiMessage.textContent = '您好，我是小胡，您的学习助手，很高兴为您服务。您有什么需要帮助的嘛？';
             chatContainer.appendChild(apiMessage);
-            conversationHistory.push({ role: 'system', content: '您好，我是小胡，您的学习助手，很高兴为您服务。您有什么需要帮助的嘛？' });
+            conversationHistory.push({ role: 'system', content: '从现在开始你是智能学习助手小胡，可以用来帮助用户解决问题。' });
         };
+
+        function updateLoadingMessage(message, delay = 0) {
+            setTimeout(() => {
+                const loadingMessage = document.querySelector('.loading-message');
+                if (loadingMessage) {
+                    loadingMessage.textContent = message;
+                }
+            }, delay);
+        }
 
         async function sendRequest() {
             const inputText = userInput.value;
@@ -145,12 +154,22 @@
 
             const loadingMessage = document.createElement('div');
             loadingMessage.classList.add('chat-message', 'loading-message');
-            loadingMessage.textContent = '正在联网思考中...';
             chatContainer.appendChild(loadingMessage);
             chatContainer.scrollTop = chatContainer.scrollHeight;
 
+            updateLoadingMessage('正在组织语言中...', 0);
             setTimeout(() => {
-                loadingMessage.innerHTML = '正在组织语言...请稍后';
+                updateLoadingMessage('正在回复中...', 1000);
+                let secondsRemaining = Math.floor(Math.random() * 6) + 5; // 生成 5 到 10 的随机数
+                const countdownInterval = setInterval(() => {
+                    if (secondsRemaining <= 0) {
+                        clearInterval(countdownInterval);
+                        updateLoadingMessage('目前没有任何问题，机器人正在努力组织语言回复中，请稍等几秒');
+                    } else {
+                        updateLoadingMessage(`预计还需要${secondsRemaining}秒`);
+                        secondsRemaining--;
+                    }
+                }, 1000);
             }, 2000);
 
             const payload = {
