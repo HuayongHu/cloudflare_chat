@@ -93,7 +93,7 @@
             }
         }
     </style>
-    <script src="https://cors.011102.xyz/https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="./marked.min.js"></script>
 </head>
 <body>
     <div class="container" id="chatContainer">
@@ -105,14 +105,14 @@
     </div>
     <div class="footer">
         <!-- 不蒜子统计 -->
-        <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+        <script async src="./busuanzi.pure.mini.js"></script>
         <center>
             以上内容均由AI生成&nbsp ©2024&nbsp All rights reserved
             &nbsp共<span id="busuanzi_value_page_pv" size="1"><i class="fa fa-spinner fa-spin"></i></span>次访问
         </center>
     </div>
 
-    <script src="https://cors.011102.xyz/https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="./axios.min.js"></script>
     <script>
         const chatContainer = document.getElementById('chatContainer');
         const userInput = document.getElementById('userInput');
@@ -124,9 +124,9 @@
         window.onload = function() {
             const apiMessage = document.createElement('div');
             apiMessage.classList.add('chat-message', 'api-message');
-            apiMessage.textContent = '您好，我是小胡，您的学习助手，很高兴为您服务。您有什么需要帮助的嘛？';
+            apiMessage.textContent = '您好，我是您的智能学习助手，很高兴为您服务。您有什么需要帮助的嘛？';
             chatContainer.appendChild(apiMessage);
-            conversationHistory.push({ role: 'system', content: '从现在开始你是智能学习助手小胡，可以用来帮助用户解决问题。' });
+            conversationHistory.push({ role: 'system', content: '从现在开始你是智能学习助手，帮助用户解决问题。' });
         };
 
         function updateLoadingMessage(message, delay = 0) {
@@ -164,7 +164,7 @@
                 const countdownInterval = setInterval(() => {
                     if (secondsRemaining <= 0) {
                         clearInterval(countdownInterval);
-                        updateLoadingMessage('目前没有任何问题，机器人正在努力组织语言回复中，请稍等几秒');
+                        updateLoadingMessage('机器人正在努力组织语言回复中，请再稍等几秒...');
                     } else {
                         updateLoadingMessage(`预计还需要${secondsRemaining}秒`);
                         secondsRemaining--;
